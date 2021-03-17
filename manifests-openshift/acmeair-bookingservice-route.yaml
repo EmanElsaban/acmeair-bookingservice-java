@@ -3,7 +3,7 @@ kind: Route
 metadata:
   name: acmeair-booking-route
 spec:
-  host: _HOST_
+  host: acmeair.apps.hurricanes.os.fyre.ibm.com
   path: /booking
   to:
     kind: Service
