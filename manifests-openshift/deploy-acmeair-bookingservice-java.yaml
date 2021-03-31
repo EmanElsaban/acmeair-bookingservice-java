@@ -17,18 +17,18 @@ spec:
     spec:
       containers:
       - name: acmeair-bookingservice-java
-        image: emanelsabban/acmeair-microsvc:acmeair-bookingsvc3
-        #image: emanelsabban/acmeair-microsvc:acmeair-bookingervice-java
+        image: docker.io/emanelsabban/acmeair-microsvc:acmeair-bookingservice3-java
+        #image: emanelsabban/acmeair-microsvc:acmeair-bookingsvc3
         ports:
           - containerPort: 9080
           - containerPort: 9443
         imagePullPolicy: IfNotPresent
         resources:
           limits:
-            memory: 550Mi
+            memory: 400Mi
             cpu: 1
           requests:
-            memory: 550Mi
+            memory: 400Mi
             cpu: 400m
         env:
         - name: USERNAME
@@ -56,19 +56,21 @@ spec:
         - name: LOGGING_FORMAT
           value: 'simple'
         - name: JAVA_OPTIONS
-          #value: '-XX:+UseJITServer -XX:JITServerAddress=ibm-java-acceleration-server -XX:JITServerTimeout=10000 -Xjit:verbose={compilePerformance|JITServer},vlog=/tmp/vlog.txt'
-          value: '-Xjit:verbose={compilePerformance},vlog=/tmp/vlog.txt'
+          value: '-XX:+UseJITServer -XX:JITServerAddress=ibm-java-acceleration-server -XX:JITServerTimeout=10000 -Xjit:verbose={compilePerformance|JITServer},vlog=/tmp/vlog.txt'
+          #value: '-Xjit:verbose={compilePerformance},vlog=/tmp/vlog.txt'
         readinessProbe:
           httpGet:
             path: /health
             port: 9080
           initialDelaySeconds: 20
-          periodSeconds: 5
+          timeoutSeconds: 25
+          periodSeconds: 15
         livenessProbe:
           httpGet:
             path: /health
             port: 9080
           initialDelaySeconds: 120
+          timeoutSeconds: 25
           periodSeconds: 15
       nodeSelector:
         chosen: "true"
@@ -146,7 +148,13 @@ spec:
         ports:
         - containerPort: 27017
           protocol: TCP
-        resources: {}
+        resources:
+          limits:
+            memory: 500Mi
+            cpu: 2
+          requests:
+            memory: 500Mi
+            cpu: 400m        
         volumeMounts:
           - name: acmeair-booking-db-1
             mountPath: /data/configdb
